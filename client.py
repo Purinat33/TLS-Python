@@ -12,11 +12,19 @@ class Client(KeyPair):
         # Use root_ca pub key to verify the cert
         pass
 
+    def connect(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.connect((HOST, PORT))
+
+        data = self.socket.recv(1024)
+        print(data.decode())
+
 
 def main():
     client = Client(
         ca=root_ca
     )
+    client.connect()
 
 
 if __name__ == '__main__':

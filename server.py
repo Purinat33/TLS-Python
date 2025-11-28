@@ -18,9 +18,26 @@ class Server(KeyPair):
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
+    def connect(self):
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.bind((HOST, PORT))
+        self.socket.listen()
+        self.conn, addr = self.socket.accept()
+        print(f"Accept Connection from {addr}")
+
+        # Do the TLS flow then send the message
+        return self.conn  # To be used later? If we do a different func
+
+    def communicate(self):
+        # Do all the TLS stuff onwards here
+        self.conn.send(b"Hi")
+        self.conn.close()
+
 
 def main():
     server = Server(ca=root_ca)
+    server.connect()
+    server.communicate()
 
 
 if __name__ == '__main__':
