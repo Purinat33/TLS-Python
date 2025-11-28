@@ -34,7 +34,6 @@ class CA(KeyPair):
         ).not_valid_after(
             self.valid_after
         ).sign(self.get_priv(), algorithm=None)
-        print(self.certificate)
 
     # CA creates the certificate for the server
     def sign_certificate(self, pub_key, subject):
@@ -52,3 +51,6 @@ class CA(KeyPair):
             self.valid_after
         ).sign(self.get_priv(), algorithm=None)  # Sign by CA
         return certificate
+
+
+root_ca = CA()

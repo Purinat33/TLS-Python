@@ -21,6 +21,3 @@ class KeyPair:
 
     def get_priv(self):
         return self.__private_key
-
-# keya = KeyPair()
-# print(keya.key.public_bytes_raw())

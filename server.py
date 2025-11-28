@@ -1,4 +1,6 @@
-from ca import *
+from settings import *
+from ca import root_ca
+from client import *
 
 
 class Server(KeyPair):
@@ -15,4 +17,11 @@ class Server(KeyPair):
         self.certificate = ca.sign_certificate(self.key, self.subject)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        
+
+
+def main():
+    server = Server(ca=root_ca)
+
+
+if __name__ == '__main__':
+    main()
