@@ -1,19 +1,15 @@
-from settings import *
+from ca import *
 
 
-def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind((HOST, PORT))
-    s.listen()
-    conn, addr = s.accept()
-    with conn:
-        print(f"Connection with {addr}")
-        while True:
-            data = conn.recv(1024)
-            if not data:
-                break
-            print(data)
+class Server(KeyPair):
+    def __init__(self, ca):
+        super().__init__()
+        self.subject = x509.Name([
 
+            x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
 
-if __name__ == '__main__':
-    main()
+            x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "California"),
+
+            x509.NameAttribute(NameOID.LOCALITY_NAME, "Nevada"),
+        ])
+        self.certificate = ca.sign_certificate(self.key, self.subject)

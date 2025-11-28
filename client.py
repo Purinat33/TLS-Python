@@ -1,12 +1,11 @@
 from settings import *
 
 
-def main():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
+class Client(KeyPair):
+    def __init__(self, ca):
+        super().__init__()
+        self.root_ca = ca
 
-    s.send(b"Hello")
-
-
-if __name__ == '__main__':
-    main()
+    def verify_server_cert(self, server_cert):
+        # Use root_ca pub key to verify the cert
+        pass

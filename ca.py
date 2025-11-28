@@ -8,7 +8,6 @@ class CA(KeyPair):
         self.valid_before = datetime(1970, 1, 1)
         self.valid_after = datetime(2030, 12, 31)
 
-        
         self.issuer = x509.Name([
 
             x509.NameAttribute(NameOID.COUNTRY_NAME, "TH"),
@@ -42,8 +41,14 @@ class CA(KeyPair):
         certificate = x509.CertificateBuilder().subject_name(
             subject
         ).issuer_name(
-
-        )
-
-
-ca = CA()
+            self.issuer
+        ).public_key(
+            pub_key
+        ).serial_number(
+            x509.random_serial_number()
+        ).not_valid_before(
+            self.valid_before
+        ).not_valid_after(
+            self.valid_after
+        ).sign(self.get_priv(), algorithm=None)  # Sign by CA
+        return certificate
