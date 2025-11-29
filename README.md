@@ -1,7 +1,14 @@
-
 # Implementing TLS in Python Socket
 
 Because a great way to learn is to make something yourself.
+
+**Future Development Plan**:
+
+- Clean up the code into separated methods.
+- Include more CA to show chain.
+- Simulate attacks.
+- More connections. (Multiple clients)
+- Premature termination when something goes wrong.
 
 ## Steps Taken
 
