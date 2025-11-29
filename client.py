@@ -38,18 +38,21 @@ class Client(KeyPair):
         self.client_hello_msg += '\n'
         self.client_hello_msg = self.client_hello_msg.encode()
 
+    def communicate(self):
+        # Do the communication here
+
         # 1.
         # send + update transcript hash
         # Update after adding the new line
+        self.client_hello()
         self.socket.send(self.client_hello_msg)
         self.transcript_hash.update(self.client_hello_msg)
 
+        # 2.
         # Receive the server's Hello
-
-    def communicate(self):
-        # Do the communication here
-        self.client_hello()
-
+        self.server_hello = self.file_obj.readline()
+        self.transcript_hash.update(self.server_hello)
+        print(self.transcript_hash.hexdigest())
 
 def main():
     client = Client(
