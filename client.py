@@ -60,6 +60,8 @@ class Client(KeyPair):
         # 1.
         # send + update transcript hash
         # Update after adding the new line
+        # - RFC 8446 §4.1.2 (ClientHello): https://datatracker.ietf.org/doc/html/rfc8446#section-4.1.2
+        # - TLS 1.3 handshake walkthrough: https://tls13.xargs.org/
         self.client_hello()
         self.socket.send(self.client_hello_msg)
         self.transcript_hash.update(self.client_hello_msg)

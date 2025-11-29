@@ -1,6 +1,11 @@
 from settings import *
 from client import *
 
+# Handshake design broadly follows TLS 1.3:
+# - Cloudflare TLS handshake overview: https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/
+# - Illustrated TLS 1.3: https://tls13.xargs.org/
+# - RFC 8446 (TLS 1.3): https://datatracker.ietf.org/doc/html/rfc8446
+
 
 class Server:
     def __init__(self):
@@ -73,6 +78,10 @@ class Server:
 
         # 1.
         # Receive Client Hello +
+        # TLS 1.3 overview of ClientHello:
+        # - RFC 8446 §2, §4.1.2: https://datatracker.ietf.org/doc/html/rfc8446
+        # - TLS 1.3 handshake walkthrough: https://tls13.xargs.org/
+
         self.client_hello = self.file_obj.readline()
         # Update hash
         self.transcript_hash.update(self.client_hello)
