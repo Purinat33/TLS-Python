@@ -65,6 +65,23 @@ class Client(KeyPair):
         # print(self.server_eph_pub.public_bytes_raw().hex())
         # print(self.client_ephemeral_public_key.public_bytes_raw().hex())
 
+        # 4. Compute Shared Secret
+        self.shared_secret = self.client_ephemeral_private_key.exchange(
+            self.server_eph_pub)
+        # print(self.shared_secret.hex())
+
+        # 5. Derived HKDF from shared secrets
+        self.derived_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b'Handshake Data'
+        ).derive(self.shared_secret)
+
+        # print(self.derived_key.hex())
+
+        # 6. Send Certificate
+
 def main():
     client = Client(
         ca=root_ca

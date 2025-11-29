@@ -80,11 +80,28 @@ class Server(KeyPair):
             self.conn.close()
         print("Server Correct")
 
-        self.client_epuh_pub = X25519PublicKey.from_public_bytes(
+        self.client_eph_pub = X25519PublicKey.from_public_bytes(
             bytes.fromhex(client_eph_pub))
 
-        # print(self.client_epuh_pub.public_bytes_raw().hex())
+        # print(self.client_eph_pub.public_bytes_raw().hex())
         # print(self.server_public_ephiperal_key.public_bytes_raw().hex())
+
+        # 4. Compute Shared Secret
+        self.shared_secret = self.server_private_ephiperal_key.exchange(
+            self.client_eph_pub)
+        # print(self.shared_secrets.hex())
+
+        # 5. Derived HKDF from shared secrets
+        self.derived_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b'Handshake Data'
+        ).derive(self.shared_secret)
+
+        # print(self.derived_key.hex())
+        
+        # 6. Send Certificate
 
         # Final Step
         self.conn.close()
