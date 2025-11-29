@@ -26,7 +26,7 @@ class KeyPair:
     def get_priv(self):
         return self.__private_key
 
-    def save_keys(self, name, pub_path='/certs', priv_path='/private_certs'):
+    def save_keys(self, name, pub_path='certs', priv_path='private_certs'):
         with open(f'{priv_path}/{name}-key.pem', 'wb') as f:
             f.write(self.__private_key.private_bytes(
                 encoding=serialization.Encoding.PEM,
@@ -34,7 +34,7 @@ class KeyPair:
                 encryption_algorithm=serialization.NoEncryption()
             ))
 
-        with open(f'{pub_path}/{name}.pem', 'wb'):
+        with open(f'{pub_path}/{name}.pem', 'wb')as f:
             f.write(self.key.public_bytes(
                 encoding=serialization.Encoding.PEM,
                 format=serialization.PublicFormat.SubjectPublicKeyInfo

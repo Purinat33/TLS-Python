@@ -214,4 +214,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
-/private_certs
+/private_certs/*
+!/private_certs/.gitkeep
+
+/certs/*
+!/certs/.gitkeep

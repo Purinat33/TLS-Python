@@ -51,7 +51,7 @@ class CA(KeyPair):
             self.valid_after
         ).sign(self.get_priv(), algorithm=None)  # Sign by CA
         return certificate
-    
-    def save_cerificate(self, path='/certs'):
-        with open(f"{path}/certificate.pem", "wb") as f:
+
+    def save_cerificate(self, path='certs'):
+        with open(f"{path}/root_ca_certificate.pem", "wb") as f:
             f.write(self.certificate.public_bytes(serialization.Encoding.PEM))
