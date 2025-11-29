@@ -27,6 +27,9 @@ class Server(KeyPair):
         self.conn, addr = self.socket.accept()
         print(f"Accept Connection from {addr}")
 
+        # Internal buffer to get input
+        self.file_obj = self.conn.makefile('rb')
+
         # Do the TLS flow then send the message
         return self.conn  # To be used later? If we do a different func
 
@@ -37,9 +40,11 @@ class Server(KeyPair):
     def communicate(self):
         # Do all the TLS stuff onwards here
 
-        # Receive Client Hello
-        self.client_hello = self.conn.recv(1024)
-        print(self.client_hello.decode().split('\n'))
+        # 1.
+        # Receive Client Hello +
+        client_hello = self.file_obj.readline()
+        # Update hash
+        self.transcript_hash.update(client_hello)
 
         self.conn.close()
 

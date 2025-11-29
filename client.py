@@ -16,6 +16,7 @@ class Client(KeyPair):
 
     def connect(self):
         self.socket.connect((HOST, PORT))
+        self.file_obj = self.socket.makefile('rb')
 
     def client_hello(self):
         self.client_random = os.urandom(32).hex()  # 32 Bytes
@@ -37,10 +38,13 @@ class Client(KeyPair):
         self.client_hello_msg += '\n'
         self.client_hello_msg = self.client_hello_msg.encode()
 
-        # Update transcript hash
+        # 1.
+        # send + update transcript hash
+        # Update after adding the new line
+        self.socket.send(self.client_hello_msg)
         self.transcript_hash.update(self.client_hello_msg)
 
-        self.socket.send(self.client_hello_msg)
+        # Receive the server's Hello
 
     def communicate(self):
         # Do the communication here
