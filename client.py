@@ -8,7 +8,7 @@ class Client(KeyPair):
         super().__init__()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.root_ca = ca
-        self.transcript_hash = ""
+        self.transcript_hash = hashlib.sha256()
 
     def verify_server_cert(self, server_cert):
         # Use root_ca pub key to verify the cert
@@ -34,6 +34,9 @@ class Client(KeyPair):
             "Suite": self.cipher_suits,
             "ServerName": self.server_name
         }).encode()
+
+        # Update transcript hash
+        self.transcript_hash.update(self.client_hello_msg)
 
         self.socket.send(self.client_hello_msg)
 
