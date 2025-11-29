@@ -1,33 +1,9 @@
 from settings import *
-from ca import *
 from client import *
 
 
 class Server:
     def __init__(self):
-        # self.subject = x509.Name([
-
-        #     x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
-
-        #     x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "California"),
-        #     x509.NameAttribute(NameOID.COMMON_NAME, "example-server"),
-        #     x509.NameAttribute(NameOID.LOCALITY_NAME, "Nevada"),
-        # ])
-        # self.certificate = ca.sign_certificate(self.key, self.subject)
-
-        # Load Public Key
-        pub_path = 'certs/server.pem'
-        try:
-            with open(pub_path, 'rb') as f:
-                pub_data = f.read()
-            self.key = serialization.load_pem_public_key(pub_data)
-
-        except FileNotFoundError:
-            print(f"Error: public key file not found at {pub_path}")
-
-        except ValueError as e:
-            print(f"Error loading public key: {e}")
-
         # Load Certificate
         cert_path = 'certs/server_certificate.pem'
         try:
@@ -49,7 +25,7 @@ class Server:
             self._private_key = serialization.load_pem_private_key(priv_data)
 
         except FileNotFoundError:
-            print(f"Error: private key file not found at {pub_path}")
+            print(f"Error: private key file not found at {priv_path}")
 
         except ValueError as e:
             print(f"Error loading private key: {e}")

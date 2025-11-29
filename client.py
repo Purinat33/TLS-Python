@@ -1,5 +1,4 @@
 from settings import *
-from ca import *
 from server import *
 
 
@@ -21,17 +20,6 @@ class Client(KeyPair):
 
         except ValueError as e:
             print(f"Error loading certificate: {e}")
-
-    # def verify_server_cert(self, server_cert: x509.Certificate):
-    #     # Use root_ca pub key to verify the cert
-    #     if server_cert.issuer != self.root_ca.issuer:
-    #         print("Incorrect Issuer")
-    #     else:
-    #         print("Correct CA")
-
-    #     signature = server_cert.signature
-    #     tbs_cert = server_cert.tbs_certificate_bytes
-    #     self.root_ca.key.verify(signature, tbs_cert)
 
     def connect(self):
         self.socket.connect((HOST, PORT))
