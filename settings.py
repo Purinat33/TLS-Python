@@ -6,7 +6,7 @@ from datetime import datetime
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography import x509
 from cryptography.x509.oid import NameOID
-
+import secrets
 
 HOST = 'localhost'
 PORT = 9914
