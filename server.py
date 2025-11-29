@@ -128,9 +128,7 @@ class Server(KeyPair):
 
 
 def main():
-    server = Server(
-        ca=root_ca
-    )
+    server = Server()
     server.connect()
     server.communicate()
 
