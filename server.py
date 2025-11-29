@@ -121,12 +121,30 @@ class Server:
             self.certificate.public_bytes(
                 encoding=serialization.Encoding.PEM
             ).hex()
-        ).encode()
+        )
+        cert_to_send += '\n'
+        cert_to_send = cert_to_send.encode()
 
         self.transcript_hash.update(cert_to_send)
         self.conn.send(cert_to_send)
         # print(self.transcript_hash.hexdigest())
         # print(self.certificate.public_key())
+
+        # 7. Certificate Verify
+        hash_for_sig = self.transcript_hash.copy().digest()
+        self.signed_digest = self._private_key.sign(hash_for_sig)
+
+        # Send the message
+        self.certificate_verify_handshake = json.dumps(
+            self.signed_digest.hex()
+        )
+        self.certificate_verify_handshake += '\n'
+        self.certificate_verify_handshake = self.certificate_verify_handshake.encode()
+
+        self.transcript_hash.update(self.certificate_verify_handshake)
+        self.conn.send(self.certificate_verify_handshake)
+
+        print(self.transcript_hash.hexdigest())
 
         # Final Step
         self.conn.close()

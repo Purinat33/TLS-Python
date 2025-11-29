@@ -110,6 +110,18 @@ class Client(KeyPair):
         # print(self.server_certificate)
         self.ca_verify_cert()
 
+        # 8. Receive Certificate Verify data
+        certificate_verify = self.file_obj.readline()
+        hash_to_verify = self.transcript_hash.copy().digest()
+        self.transcript_hash.update(certificate_verify)
+
+        self.cv_signature = bytes.fromhex(
+            json.loads(certificate_verify.decode())
+        )
+
+        self.server_certificate.public_key().verify(self.cv_signature, hash_to_verify)
+        print(self.transcript_hash.hexdigest())
+
 
 def main():
     client = Client()
