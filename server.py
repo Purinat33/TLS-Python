@@ -61,19 +61,32 @@ class Server(KeyPair):
         self.client_hello = self.file_obj.readline()
         # Update hash
         self.transcript_hash.update(self.client_hello)
-        print("Received Client Hello")
 
         # 2.
         # Server Hello
         self.server_hello()
         self.conn.send(self.server_hello_msg)
         self.transcript_hash.update(self.server_hello_msg)
-        print(self.transcript_hash.hexdigest())
 
         # 3.
         # Decode hello message
-        print(self.client_hello)
+        original_hello_msg = json.loads(self.client_hello)
+        self.client_random = original_hello_msg['ClientRandom']
+        client_eph_pub = original_hello_msg['EphPubKey']
+        self.server_name = original_hello_msg['ServerName']
+        # Perform checking stuff (Optional)
+        if self.server_name != self.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value:
+            print("Wrong Server Name")
+            self.conn.close()
+        print("Server Correct")
 
+        self.client_epuh_pub = X25519PublicKey.from_public_bytes(
+            bytes.fromhex(client_eph_pub))
+
+        # print(self.client_epuh_pub.public_bytes_raw().hex())
+        # print(self.server_public_ephiperal_key.public_bytes_raw().hex())
+
+        # Final Step
         self.conn.close()
 
     # https://realpython.com/ref/stdlib/hashlib/

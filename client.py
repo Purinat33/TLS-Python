@@ -52,12 +52,18 @@ class Client(KeyPair):
         # Receive the server's Hello
         self.server_hello = self.file_obj.readline()
         self.transcript_hash.update(self.server_hello)
-        print(self.transcript_hash.hexdigest())
 
         # 3.
         # Decode hello message
-        print(self.server_hello)
+        original_hello_msg = json.loads(self.server_hello)
+        self.server_random = original_hello_msg['ServerRandom']
+        server_eph_pub = original_hello_msg['EphPubKey']
+        self.server_eph_pub = X25519PublicKey.from_public_bytes(
+            bytes.fromhex(server_eph_pub)
+        )
 
+        # print(self.server_eph_pub.public_bytes_raw().hex())
+        # print(self.client_ephemeral_public_key.public_bytes_raw().hex())
 
 def main():
     client = Client(
