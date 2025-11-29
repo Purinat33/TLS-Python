@@ -121,6 +121,14 @@ class Client(KeyPair):
 
         self.server_certificate.public_key().verify(self.cv_signature, hash_to_verify)
         print(self.transcript_hash.hexdigest())
+        
+        # 9. Finished Key
+        self.finished_key_client = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"server finished"
+        ).derive(self.derived_key)
 
 
 def main():

@@ -134,7 +134,7 @@ class Server:
         hash_for_sig = self.transcript_hash.copy().digest()
         self.signed_digest = self._private_key.sign(hash_for_sig)
 
-        # Send the message
+        # Send the Certificate Verify message
         self.certificate_verify_handshake = json.dumps(
             self.signed_digest.hex()
         )
@@ -145,6 +145,18 @@ class Server:
         self.conn.send(self.certificate_verify_handshake)
 
         print(self.transcript_hash.hexdigest())
+
+        # 8. Finished Message
+        self.finished_key_server = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"server finished"
+        ).derive(self.derived_key)
+        
+        finished_hash = self.transcript_hash.copy().digest()
+        server_finished_mac = hmac.HMAC(self.finished_key_server, finished_hash)
+        
 
         # Final Step
         self.conn.close()
