@@ -12,7 +12,10 @@ class Client(KeyPair):
 
     def verify_server_cert(self, server_cert):
         # Use root_ca pub key to verify the cert
-        pass
+        if server_cert.issuer != self.root_ca.issuer:
+            return False
+        
+        
 
     def connect(self):
         self.socket.connect((HOST, PORT))
@@ -80,7 +83,20 @@ class Client(KeyPair):
 
         # print(self.derived_key.hex())
 
-        # 6. Send Certificate
+        # 6. Receive Certificate
+        serv_certificate = self.file_obj.readline()
+        self.transcript_hash.update(serv_certificate)
+        # print(self.transcript_hash.hexdigest()) # Both side matches
+        server_certificate_pem = bytes.fromhex(
+            json.loads(serv_certificate.decode()))
+
+        self.server_certificate = x509.load_pem_x509_certificate(
+            server_certificate_pem)
+
+        # 7. Client verify server cerificate using CA public key
+        print(self.server_certificate)
+        print(self.verify_server_cert(self.server_certificate))
+
 
 def main():
     client = Client(

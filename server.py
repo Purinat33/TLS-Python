@@ -100,8 +100,18 @@ class Server(KeyPair):
         ).derive(self.shared_secret)
 
         # print(self.derived_key.hex())
-        
+
         # 6. Send Certificate
+        cert_to_send = json.dumps(
+            self.certificate.public_bytes(
+                encoding=serialization.Encoding.PEM
+            ).hex()
+        ).encode()
+
+        self.transcript_hash.update(cert_to_send)
+        self.conn.send(cert_to_send)
+        # print(self.transcript_hash.hexdigest())
+        print(self.certificate.public_key())
 
         # Final Step
         self.conn.close()
