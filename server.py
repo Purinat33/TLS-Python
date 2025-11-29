@@ -177,9 +177,24 @@ class Server:
         self.conn.send(self.server_finished_handshake)
 
         # print(server_finished_mac.hex())
-        
+
         # 9. Finished Message Client
-        
+        client_finished = self.file_obj.readline()
+        to_verify = self.transcript_hash.copy().digest()
+        self.transcript_hash.update(client_finished)
+
+        self.client_mac = bytes.fromhex(
+            json.loads(client_finished.decode())
+        )
+
+        h = hmac.HMAC(self.finished_key_client, hashes.SHA256())
+        h.update(to_verify)
+        h.verify(self.client_mac)
+
+        print()
+        print(self.client_mac.hex())
+        print()
+        print(self.server_finished_handshake.hex())
 
         # Final Step
         self.conn.close()

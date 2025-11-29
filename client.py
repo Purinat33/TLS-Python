@@ -137,7 +137,7 @@ class Client(KeyPair):
             info=b"server finished"
         ).derive(self.derived_key)
 
-        # Receive Finish Message
+        # Receive Finish Message (Server)
         server_finished = self.file_obj.readline()
         to_verify = self.transcript_hash.copy().digest()
         self.transcript_hash.update(server_finished)
@@ -151,9 +151,27 @@ class Client(KeyPair):
         h.update(to_verify)
         h.verify(self.server_mac)
         # print(self.server_mac.hex())
-        
+
         # 10. Finished Message (Client)
-        
+        finished_hash = self.transcript_hash.copy().digest()
+        h = hmac.HMAC(self.finished_key_client, hashes.SHA256())
+        h.update(finished_hash)
+        client_finished_mac = h.finalize()
+
+        self.client_finished_handshake = json.dumps(
+            client_finished_mac.hex()
+        )
+
+        self.client_finished_handshake += '\n'
+        self.client_finished_handshake = self.client_finished_handshake.encode()
+
+        self.transcript_hash.update(self.client_finished_handshake)
+        self.socket.send(self.client_finished_handshake)
+
+        print()
+        print(self.server_mac.hex())
+        print()
+        print(self.client_finished_handshake.hex())
 
 
 def main():
