@@ -30,8 +30,7 @@ class Server(KeyPair):
 
     def communicate(self):
         # Do all the TLS stuff onwards here
-        data = self.conn.recv(1024)
-        print(f"Client Random = {data}")
+        
         self.conn.close()
 
 
