@@ -22,7 +22,8 @@ class Server:
         try:
             with open(priv_path, 'rb') as f:
                 priv_data = f.read()
-            self._private_key = serialization.load_pem_private_key(priv_data)
+            self._private_key = serialization.load_pem_private_key(
+                priv_data, password=None)
 
         except FileNotFoundError:
             print(f"Error: private key file not found at {priv_path}")

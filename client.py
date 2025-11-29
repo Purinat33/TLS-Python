@@ -21,6 +21,15 @@ class Client(KeyPair):
         except ValueError as e:
             print(f"Error loading certificate: {e}")
 
+    def ca_verify_cert(self):
+        if self.server_certificate.issuer != self.root_ca.subject:
+            print("Invalid Certificate")
+
+        # More verification (Date etc) if needed
+        self.root_ca.public_key().verify(self.server_certificate.signature,
+                                         self.server_certificate.tbs_certificate_bytes)
+        print("Certificate Verification Passed")
+
     def connect(self):
         self.socket.connect((HOST, PORT))
         self.file_obj = self.socket.makefile('rb')
@@ -99,6 +108,7 @@ class Client(KeyPair):
 
         # 7. Client verify server cerificate using CA public key
         # print(self.server_certificate)
+        self.ca_verify_cert()
 
 
 def main():
