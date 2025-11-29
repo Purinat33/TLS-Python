@@ -1,10 +1,10 @@
 from settings import *
-from ca import root_ca
+from ca import *
 from client import *
 
 
 class Server(KeyPair):
-    def __init__(self):
+    def __init__(self, ca: CA):
         super().__init__()
         self.subject = x509.Name([
 
@@ -14,7 +14,7 @@ class Server(KeyPair):
             x509.NameAttribute(NameOID.COMMON_NAME, "example-server"),
             x509.NameAttribute(NameOID.LOCALITY_NAME, "Nevada"),
         ])
-        self.certificate = root_ca.sign_certificate(self.key, self.subject)
+        self.certificate = ca.sign_certificate(self.key, self.subject)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -128,7 +128,9 @@ class Server(KeyPair):
 
 
 def main():
-    server = Server()
+    server = Server(
+        ca=root_ca
+    )
     server.connect()
     server.communicate()
 

@@ -4,12 +4,12 @@ from server import *
 
 
 class Client(KeyPair):
-    def __init__(self):
+    def __init__(self, ca: CA):
         super().__init__()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.root_ca = root_ca
+        self.root_ca = ca
         self.transcript_hash = hashlib.sha256()
-
+    
     def verify_server_cert(self, server_cert: x509.Certificate):
         # Use root_ca pub key to verify the cert
         if server_cert.issuer != self.root_ca.issuer:
