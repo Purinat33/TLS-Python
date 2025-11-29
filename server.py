@@ -146,16 +146,39 @@ class Server:
 
         print(self.transcript_hash.hexdigest())
 
-        # 8. Finished Message
+        # 8. Finished Message Server
         self.finished_key_server = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
             salt=None,
             info=b"server finished"
         ).derive(self.derived_key)
-        
+
+        self.finished_key_client = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"client finished"
+        ).derive(self.derived_key)
+
         finished_hash = self.transcript_hash.copy().digest()
-        server_finished_mac = hmac.HMAC(self.finished_key_server, finished_hash)
+        h = hmac.HMAC(self.finished_key_server, hashes.SHA256())
+        h.update(finished_hash)
+        server_finished_mac = h.finalize()
+
+        # Send finished message to the Client
+        self.server_finished_handshake = json.dumps(
+            server_finished_mac.hex()
+        )
+        self.server_finished_handshake += '\n'
+        self.server_finished_handshake = self.server_finished_handshake.encode()
+
+        self.transcript_hash.update(self.server_finished_handshake)
+        self.conn.send(self.server_finished_handshake)
+
+        # print(server_finished_mac.hex())
+        
+        # 9. Finished Message Client
         
 
         # Final Step

@@ -121,14 +121,39 @@ class Client(KeyPair):
 
         self.server_certificate.public_key().verify(self.cv_signature, hash_to_verify)
         print(self.transcript_hash.hexdigest())
-        
-        # 9. Finished Key
+
+        # 9. Finished Message (Server)
         self.finished_key_client = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"client finished"
+        ).derive(self.derived_key)
+
+        self.finished_key_server = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
             salt=None,
             info=b"server finished"
         ).derive(self.derived_key)
+
+        # Receive Finish Message
+        server_finished = self.file_obj.readline()
+        to_verify = self.transcript_hash.copy().digest()
+        self.transcript_hash.update(server_finished)
+
+        # Received MAC Server
+        self.server_mac = bytes.fromhex(
+            json.loads(server_finished.decode())
+        )
+
+        h = hmac.HMAC(self.finished_key_server, hashes.SHA256())
+        h.update(to_verify)
+        h.verify(self.server_mac)
+        # print(self.server_mac.hex())
+        
+        # 10. Finished Message (Client)
+        
 
 
 def main():
