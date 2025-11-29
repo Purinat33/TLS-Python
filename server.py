@@ -45,7 +45,7 @@ class Server(KeyPair):
         self.server_name = 'example-server'
 
         self.server_hello_msg = json.dumps({
-            "ClientRandom": self.server_random,
+            "ServerRandom": self.server_random,
             "Version": self.protocol_version,
             "EphPubKey": eph_public_key_bytes,
             "Suite": self.cipher_suits,
@@ -69,8 +69,10 @@ class Server(KeyPair):
         self.conn.send(self.server_hello_msg)
         self.transcript_hash.update(self.server_hello_msg)
         print(self.transcript_hash.hexdigest())
-        
-        # 3
+
+        # 3.
+        # Decode hello message
+        print(self.client_hello)
 
         self.conn.close()
 

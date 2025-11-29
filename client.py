@@ -54,6 +54,11 @@ class Client(KeyPair):
         self.transcript_hash.update(self.server_hello)
         print(self.transcript_hash.hexdigest())
 
+        # 3.
+        # Decode hello message
+        print(self.server_hello)
+
+
 def main():
     client = Client(
         ca=root_ca
