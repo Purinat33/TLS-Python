@@ -4,7 +4,7 @@ from client import *
 
 
 class Server(KeyPair):
-    def __init__(self, ca):
+    def __init__(self):
         super().__init__()
         self.subject = x509.Name([
 
@@ -14,7 +14,7 @@ class Server(KeyPair):
             x509.NameAttribute(NameOID.COMMON_NAME, "example-server"),
             x509.NameAttribute(NameOID.LOCALITY_NAME, "Nevada"),
         ])
-        self.certificate = ca.sign_certificate(self.key, self.subject)
+        self.certificate = root_ca.sign_certificate(self.key, self.subject)
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -111,7 +111,7 @@ class Server(KeyPair):
         self.transcript_hash.update(cert_to_send)
         self.conn.send(cert_to_send)
         # print(self.transcript_hash.hexdigest())
-        print(self.certificate.public_key())
+        # print(self.certificate.public_key())
 
         # Final Step
         self.conn.close()
@@ -128,7 +128,7 @@ class Server(KeyPair):
 
 
 def main():
-    server = Server(ca=root_ca)
+    server = Server()
     server.connect()
     server.communicate()
 

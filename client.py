@@ -1,21 +1,25 @@
 from settings import *
-from ca import root_ca
+from ca import *
 from server import *
 
 
 class Client(KeyPair):
-    def __init__(self, ca):
+    def __init__(self):
         super().__init__()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.root_ca = ca
+        self.root_ca = root_ca
         self.transcript_hash = hashlib.sha256()
 
-    def verify_server_cert(self, server_cert):
+    def verify_server_cert(self, server_cert: x509.Certificate):
         # Use root_ca pub key to verify the cert
         if server_cert.issuer != self.root_ca.issuer:
-            return False
-        
-        
+            print("Incorrect Issuer")
+        else:
+            print("Correct CA")
+
+        signature = server_cert.signature
+        tbs_cert = server_cert.tbs_certificate_bytes
+        self.root_ca.key.verify(signature, tbs_cert)
 
     def connect(self):
         self.socket.connect((HOST, PORT))
@@ -94,14 +98,12 @@ class Client(KeyPair):
             server_certificate_pem)
 
         # 7. Client verify server cerificate using CA public key
-        print(self.server_certificate)
-        print(self.verify_server_cert(self.server_certificate))
+        # print(self.server_certificate)
+        self.verify_server_cert(self.server_certificate)
 
 
 def main():
-    client = Client(
-        ca=root_ca
-    )
+    client = Client()
     client.connect()
     client.communicate()
 
