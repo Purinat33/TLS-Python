@@ -195,6 +195,36 @@ class Server:
         print(self.client_mac.hex())
         print()
         print(self.server_finished_handshake.hex())
+        
+        
+        # 10. Write Key
+        self.client_app_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"client app key"
+        ).derive(self.derived_key)
+
+        self.client_app_iv = HKDF(
+            algorithm=hashes.SHA256(),
+            length=12,
+            salt=None,
+            info=b"client app iv"
+        ).derive(self.derived_key)
+
+        self.server_app_key = HKDF(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=None,
+            info=b"server app key"
+        ).derive(self.derived_key)
+
+        self.server_app_iv = HKDF(
+            algorithm=hashes.SHA256(),
+            length=12,
+            salt=None,
+            info=b"server app iv"
+        ).derive(self.derived_key)
 
         # Final Step
         self.conn.close()
