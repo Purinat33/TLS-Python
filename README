@@ -1,3 +1,4 @@
+
 # Implementing TLS in Python Socket
 
 Because a great way to learn is to make something yourself.
@@ -322,35 +323,3 @@ The application data is now:
 **Source**: [ResearchGate](https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.researchgate.net%2Ffigure%2FTLS-Handshake-General-Steps-for-Establishing-a-TLS-Connection_fig3_292995131&psig=AOvVaw3onDP6-OyC2hxJY-p0yJaY&ust=1764512487766000&source=images&cd=vfe&opi=89978449&ved=0CBgQjhxqFwoTCMidiLLHl5EDFQAAAAAdAAAAABBW)
 
 **AI Disclosure**: The logical steps and some contents of README.md are consulted with the use of an LLM tool. No copy-paste-ready codes are generated or given to me at all throughout the development.
-
-<!-- ## Steps Taken:
-
-1. A standalone script must be ran to:
-   - Generate Root CA public/private keys into files.
-   - Generate and sign CA Certificate into a file using the CA's own private key.
-   - Generate server's public/private keys into files.
-   - Generate and sign the server's certificate with the Root CA's private key.
-2. The certificates will contain:
-   - Subject Name
-   - Issuer Name
-   - Common Name (What we are connecting to)
-   - Serial Number
-   - Period of Validity
-   - The holder's **public key**
-   - A unique signature created using the CA's private key
-3. The server binds to an IP and port, and listens for a connection.
-4. The client connects to the server.
-   - Normally the client can start communicating with the server with only steps 3-4. But that is considered unsecured.
-5. The client sends a `ClientHello` message, notable fields include:
-   - `ClientRandom`: A random 32 bytes of message.
-   - `EphPubKey`: The public key that the client generates a new pair of key (for this communication session only).
-6. The client also hash the message into a **Transcript Hash**, both sides will maintain the same hash to ensure integrity. The hash will be continuously updated.
-7. The server receives the `ClientHello` message, update its own transcript hash, and also sends back its own `ServerHello`
-8. A shared secret message is computed between both parties.
-9. A HKDF key is derived from this secret.
-10. The server sends its own certificate to the client.
-11. The client verify the certificate using the Root CA's **public key** (gotten from the Root CA's certificate).
-12. The server also sends a `CertificateVerify` message, by signing the transcript hash up to that message.
-13. The client verify the message using the server's **public key** (gotten from the server's certificate from the previous step).
-14. Both parties compute finish messages.
-15. Handshake step is now completed. Messages can be sent securely between both sides. -->
