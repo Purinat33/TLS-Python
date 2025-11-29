@@ -8,7 +8,20 @@ class Client(KeyPair):
         super().__init__()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.transcript_hash = hashlib.sha256()
-    
+
+        # Load Root CA Certificate
+        root_ca_path = 'certs/root_ca_certificate.pem'
+        try:
+            with open(root_ca_path, 'rb') as f:
+                cert_data = f.read()
+            self.root_ca = x509.load_pem_x509_certificate(cert_data)
+
+        except FileNotFoundError:
+            print(f"Error: certificate file not found at {root_ca_path}")
+
+        except ValueError as e:
+            print(f"Error loading certificate: {e}")
+
     # def verify_server_cert(self, server_cert: x509.Certificate):
     #     # Use root_ca pub key to verify the cert
     #     if server_cert.issuer != self.root_ca.issuer:
@@ -98,7 +111,6 @@ class Client(KeyPair):
 
         # 7. Client verify server cerificate using CA public key
         # print(self.server_certificate)
-        self.verify_server_cert(self.server_certificate)
 
 
 def main():

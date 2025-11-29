@@ -15,9 +15,44 @@ class Server:
         # ])
         # self.certificate = ca.sign_certificate(self.key, self.subject)
 
-        # Load certificate
-        self.key = 0
-        self.certificate = 0
+        # Load Public Key
+        pub_path = 'certs/server.pem'
+        try:
+            with open(pub_path, 'rb') as f:
+                pub_data = f.read()
+            self.key = serialization.load_pem_public_key(pub_data)
+
+        except FileNotFoundError:
+            print(f"Error: public key file not found at {pub_path}")
+
+        except ValueError as e:
+            print(f"Error loading public key: {e}")
+
+        # Load Certificate
+        cert_path = 'certs/server_certificate.pem'
+        try:
+            with open(cert_path, 'rb') as f:
+                cert_data = f.read()
+            self.certificate = x509.load_pem_x509_certificate(cert_data)
+
+        except FileNotFoundError:
+            print(f"Error: certificate file not found at {cert_path}")
+
+        except ValueError as e:
+            print(f"Error loading certificate: {e}")
+
+        # Load Private Key
+        priv_path = 'private_certs/server-key.pem'
+        try:
+            with open(priv_path, 'rb') as f:
+                priv_data = f.read()
+            self._private_key = serialization.load_pem_private_key(priv_data)
+
+        except FileNotFoundError:
+            print(f"Error: private key file not found at {pub_path}")
+
+        except ValueError as e:
+            print(f"Error loading private key: {e}")
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -78,10 +113,10 @@ class Server:
         client_eph_pub = original_hello_msg['EphPubKey']
         self.server_name = original_hello_msg['ServerName']
         # Perform checking stuff (Optional)
-        if self.server_name != self.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value:
-            print("Wrong Server Name")
-            self.conn.close()
-        print("Server Correct")
+        # if self.server_name != self.subject.get_attributes_for_oid(NameOID.COMMON_NAME)[0].value:
+        #     print("Wrong Server Name")
+        #     self.conn.close()
+        # print("Server Correct")
 
         self.client_eph_pub = X25519PublicKey.from_public_bytes(
             bytes.fromhex(client_eph_pub))
