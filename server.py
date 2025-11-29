@@ -28,9 +28,13 @@ class Server(KeyPair):
         # Do the TLS flow then send the message
         return self.conn  # To be used later? If we do a different func
 
+    def server_hello(self):
+        self.server_private_ephiperal_key = X25519PrivateKey.generate()
+        self.server_public_ephiperal_key = self.server_private_ephiperal_key.public_key()
+
     def communicate(self):
         # Do all the TLS stuff onwards here
-        
+
         self.conn.close()
 
 

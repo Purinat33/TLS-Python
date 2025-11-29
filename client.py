@@ -21,22 +21,24 @@ class Client(KeyPair):
         self.client_random = os.urandom(32)  # 32 Bytes
         self.client_ephemeral_private_key = X25519PrivateKey.generate()
         self.client_ephemeral_public_key = self.client_ephemeral_private_key.public_key()
-        self.protocol_version = 1
-        self.cipher_suits = 'X25519'
-        self.server_name = 'example-server'
+        self.protocol_version = bytes(1)
+        self.cipher_suits = 'X25519'.encode()
+        self.server_name = 'example-server'.encode()
 
-        self.client_hello_msg = bytes({
-            "ClientRandom": self.client_random,
-            "Version": self.protocol_version,
-            "EphPubKey": self.client_ephemeral_public_key,
-            "Suite": self.cipher_suits,
-            "ServerName": self.server_name
-        })
+        eph_public_key_bytes = self.client_ephemeral_public_key.public_bytes_raw()
+
+        # self.client_hello_msg = {
+        #     "ClientRandom".encode(): self.client_random,
+        #     "Version".encode(): self.protocol_version,
+        #     "EphPubKey".encode(): eph_public_key_bytes,
+        #     "Suite".encode(): self.cipher_suits,
+        #     "ServerName".encode(): self.server_name
+        # }
+        self.socket.send(self.client_hello_msg)
 
     def communicate(self):
         # Do the communication here
         self.client_hello()
-        self.socket.send(self.client_hello_msg)
 
 
 def main():
