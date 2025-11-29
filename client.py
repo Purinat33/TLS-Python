@@ -32,8 +32,10 @@ class Client(KeyPair):
             "Version": self.protocol_version,
             "EphPubKey": eph_public_key_bytes,
             "Suite": self.cipher_suits,
-            "ServerName": self.server_name
-        }).encode()
+            "ServerName": self.server_name,
+        })
+        self.client_hello_msg += '\n'
+        self.client_hello_msg = self.client_hello_msg.encode()
 
         # Update transcript hash
         self.transcript_hash.update(self.client_hello_msg)

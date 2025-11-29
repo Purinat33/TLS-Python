@@ -37,6 +37,10 @@ class Server(KeyPair):
     def communicate(self):
         # Do all the TLS stuff onwards here
 
+        # Receive Client Hello
+        self.client_hello = self.conn.recv(1024)
+        print(self.client_hello.decode().split('\n'))
+
         self.conn.close()
 
 
