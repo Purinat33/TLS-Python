@@ -172,8 +172,7 @@ class Client(KeyPair):
         print(self.server_mac.hex())
         print()
         print(self.client_finished_handshake.hex())
-        
-        
+
         # 11. Write Key (App)
         self.client_app_key = HKDF(
             algorithm=hashes.SHA256(),
@@ -181,14 +180,14 @@ class Client(KeyPair):
             salt=None,
             info=b"client app key"
         ).derive(self.derived_key)
-        
+
         self.client_app_iv = HKDF(
             algorithm=hashes.SHA256(),
             length=12,
             salt=None,
             info=b"client app iv"
         ).derive(self.derived_key)
-        
+
         self.server_app_key = HKDF(
             algorithm=hashes.SHA256(),
             length=32,
@@ -202,6 +201,25 @@ class Client(KeyPair):
             salt=None,
             info=b"server app iv"
         ).derive(self.derived_key)
+
+        # 12. Sending Data.
+        self.client_seq = 0
+        plaintext = b"This is the Client"
+        seq = self.client_seq
+        seq_bytes = seq.to_bytes(12, "big")
+        nonce = bytes(a ^ b for a, b in zip(self.client_app_iv, seq_bytes))
+        aesgcm = AESGCM(self.client_app_key)
+        ciphertext = aesgcm.encrypt(nonce, plaintext, None)
+        message = json.dumps(
+            {
+                "Seq": seq,
+                "Ciphertext": ciphertext.hex(),
+            }
+        ) + '\n'
+        message_bytes = message.encode()
+
+        self.socket.send(message_bytes)
+        self.client_seq += 1
 
 
 def main():

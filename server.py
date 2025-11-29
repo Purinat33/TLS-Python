@@ -195,8 +195,7 @@ class Server:
         print(self.client_mac.hex())
         print()
         print(self.server_finished_handshake.hex())
-        
-        
+
         # 10. Write Key
         self.client_app_key = HKDF(
             algorithm=hashes.SHA256(),
@@ -225,6 +224,25 @@ class Server:
             salt=None,
             info=b"server app iv"
         ).derive(self.derived_key)
+
+        # 11. Sending Data
+        self.client_recv_seq = 0
+        message_bytes = self.file_obj.readline()
+        app_obj = json.loads(message_bytes)
+        print(f"Non-Decrypted Message: {app_obj['Ciphertext']}")
+        seq = app_obj['Seq']
+        ciphertext = bytes.fromhex(app_obj['Ciphertext'])
+        if seq != self.client_recv_seq:
+            print("Out of Order")
+
+        seq_bytes = seq.to_bytes(12, 'big')
+        nonce = bytes(a ^ b for a, b in zip(self.client_app_iv, seq_bytes))
+
+        aescgm = AESGCM(self.client_app_key)
+        plaintext = aescgm.decrypt(nonce, ciphertext, None)
+
+        print(f"\nDecrypted Message: {plaintext}")
+        self.client_recv_seq += 1
 
         # Final Step
         self.conn.close()
